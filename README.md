@@ -16,6 +16,7 @@ Commands for building and profiling:
 The time-complexity of this reduction operation  is O(N) and there are N floating point operations to be done for this case. Given theoretical peak performance (or the ROOF in roofline model), we can compute relative performance if TIME taken by the kernel is known using
 
 $$ \text{AGAINSTROOF [PERCENT]} = \frac{N \text{[FLOP]} } {\text{TIME [s] *  GPUPEAKPERFORMANCE [FLOPs]}} * 100 [\text{PERCENT}] $$
+
 CUBLAS time taken = 0.4 ms (uses `asum_kernel` as seen from `nsys` data). In this case, CUBLAS is about roughly 0.73% of the roofline performance for this GPU.
 
 
