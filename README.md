@@ -2,7 +2,7 @@
 
 Performance data on RTX3050Mobile for a vector of size N. In our case, N = 16 million elements (4096^2).
 
-The max theoretical performance of a RTX3050 Mobile is 5.501 TFLOPS (for FP32) and global memory bandwidth of 192 GBytes/s.
+The max ceiling performance of a RTX3050 Mobile is 5.501 TFLOPS (for FP32) and global memory bandwidth of 192 GBytes/s.
 Source : https://www.techpowerup.com/gpu-specs/geforce-rtx-3050-mobile.c3788
 
 Commands for building and profiling:
@@ -19,10 +19,12 @@ $$ \text{AGAINSTROOF [PERCENT]} = \frac{N \text{[FLOP]} } {\text{TIME [s] *  GPU
 
 CUBLAS time taken = 0.415 ms (uses `asum_kernel` twice as seen from `nsys` data.). In this case, CUBLAS uses about roughly 0.735 % of the roofline performance for this GPU.
 
+Regarding bandwidth, N amount of floats are transferred to the SMs but resulting in only one float output. Therefore, the bandwidth can be approximated as N * 4 [BYTE] / (TIME [s]).
 
-|KERNEL    		|BANDWIDTH     	|TIME (ms) 	|AGAINST_CUBLAS (%)
-| --------------------- | ------------- | ------------- | ----------------
-|NAIVE (GPU serial)	|		|49.78		|0.83
-|Shared mem		|		|1.91		|21.72
-|Half the blocks	|		|0.988		|42.00
+
+|KERNEL    		|BANDWIDTH (GB/s)    	|TIME (ms) 	|AGAINST_CUBLAS (%)
+| --------------------- | --------------------- | ------------- | ----------------
+|NAIVE (GPU serial)	|1.34			|49.78		|0.83
+|Shared mem		|35.13			|1.91		|21.72
+|Half the blocks	|67.92			|0.988		|42.00
 
