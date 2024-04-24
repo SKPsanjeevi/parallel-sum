@@ -17,9 +17,12 @@ The time-complexity of this reduction operation  is O(N) and there are N floatin
 
 $$ \text{AGAINSTROOF [PERCENT]} = \frac{N \text{[FLOP]} } {\text{TIME [s] *  GPUPEAKPERFORMANCE [FLOPs]}} * 100 [\text{PERCENT}] $$
 
-CUBLAS time taken = 0.4 ms (uses `asum_kernel` as seen from `nsys` data). In this case, CUBLAS is about roughly 0.73% of the roofline performance for this GPU.
+CUBLAS time taken = 0.415 ms (uses `asum_kernel` twice as seen from `nsys` data.). In this case, CUBLAS uses about roughly 0.735 % of the roofline performance for this GPU.
 
 
 |KERNEL    		|BANDWIDTH     	|TIME (ms) 	|AGAINST_CUBLAS (%)
 | --------------------- | ------------- | ------------- | ----------------
+|NAIVE (GPU serial)	|		|49.78		|0.83
+|Shared mem		|		|1.91		|21.72
+|Half the blocks	|		|0.988		|42.00
 

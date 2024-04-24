@@ -20,8 +20,8 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=t
 
 void intializeMatrix(float *A, int size){
     for(int i = 0; i < size; i++){
-//        A[i] = static_cast<float> (rand()) / static_cast<float> (RAND_MAX);
-          A[i] = 1.;
+        // A[i] = static_cast<float> (rand()) / static_cast<float> (RAND_MAX);
+        A[i] = (float)i;
     }
 }
 
@@ -64,7 +64,6 @@ void cuBLASSUM(float *A, int N, float* result){
     int incx = 1; // stride between consecutive elements
 
     cublasSasum(handle, N, A, incx, result);
-    cout << "result from cuBLAS : "<< *result << endl;
 
     cublasDestroy(handle);
 }
