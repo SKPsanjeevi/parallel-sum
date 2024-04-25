@@ -26,5 +26,6 @@ Regarding bandwidth, N amount of floats are transferred to the SMs but resulting
 | --------------------- | --------------------- | ------------- | ----------------
 |NAIVE (GPU serial)	|1.34			|49.78		|0.83
 |Shared mem		|35.13			|1.91		|21.72
-|Half the blocks	|67.92			|0.988		|42.00
+|Halve the blocks (1/2)	|67.92			|0.988		|42.00
+|Even fewer blocks (1/8)|169.46			|0.396		|104.7
 
