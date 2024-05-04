@@ -4,17 +4,17 @@
 
 #define size 4096*4096
 
-// GPU serial version
+// GPU serial addition
 __global__
-void reductionNaive(float* A, float* result){
+void kernelV1(float* A, float* result){
     int tx = blockIdx.x * blockDim.x + threadIdx.x;
     atomicAdd(result, A[tx]);
 }
 
 
-// GPU parallel version using shared memory
+// GPU parallel reduction and using shared memory
 __global__
-void reductionShared(float* A, float* result){
+void kernelV2(float* A, float* result){
     extern __shared__ float sA[];
     int tId = blockIdx.x * blockDim.x + threadIdx.x;
     int tx = threadIdx.x;
@@ -109,20 +109,20 @@ int main(){
     // CPU compute of sum
     float hResult = computeMV(hA, N);
 
-    // // GPU kernel launch
-    // reductionNaive<<<size/256, 256>>>(A, result);
+    // kernel 1
+    kernelV1<<<size/256, 256>>>(A, result);
 
-    // // Shared memory optimization
-    // int NUM_THREADS = 256;
-    // reductionShared<<<CEIL_DIV(size, NUM_THREADS), NUM_THREADS, NUM_THREADS*sizeof(float)>>>(A, result);
+    // kernel 2
+    int NUM_THREADS = 256;
+    kernelV2<<<CEIL_DIV(size, NUM_THREADS), NUM_THREADS, NUM_THREADS*sizeof(float)>>>(A, result);
 
     // //  Kernel 3
     // int NUM_THREADS = 256;
     // kernelV3<<<CEIL_DIV(size, (NUM_THREADS * 2)), NUM_THREADS, NUM_THREADS*sizeof(float)>>>(A, result);
 
-    //  Kernel 4 - even fewer blocks
-    int NUM_THREADS = 256;
-    kernelV4<<<CEIL_DIV(size, (NUM_THREADS * 8)), NUM_THREADS, NUM_THREADS*sizeof(float)>>>(A, result);
+    // //  Kernel 4 - kernel3 with fewer blocks
+    // int NUM_THREADS = 256;
+    // kernelV4<<<CEIL_DIV(size, (NUM_THREADS * 8)), NUM_THREADS, NUM_THREADS*sizeof(float)>>>(A, result);
 
     // copy device to host memory
     gpuErrchk(cudaMemcpy(&hSumfromGPU, result, sizeof(float), cudaMemcpyDeviceToHost));    

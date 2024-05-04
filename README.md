@@ -17,7 +17,7 @@ The time-complexity of this reduction operation  is O(N) and there are N floatin
 
 $$ \text{AGAINSTROOF [PERCENT]} = \frac{N \text{[FLOP]} } {\text{TIME [s] *  GPUPEAKPERFORMANCE [FLOPs]}} * 100 [\text{PERCENT}] $$
 
-CUBLAS time taken = 0.415 ms (uses `asum_kernel` twice as seen from `nsys` data.). In this case, CUBLAS uses about roughly 0.735 % of the roofline performance for this GPU.
+CUBLAS time taken = 0.415 ms (uses `asum_kernel` twice as seen from `nsys` data.). In this case, CUBLAS uses about roughly 0.735 % of the roofline performance for this GPU. It has to be noted that the execution times of CUBLAS kernel is actually used rather than the time taken by the CUBLAS function itself. The CUBLAS functions for the reduction operations take much longer time due to branching out and to call the specific kernel needed.
 
 Regarding bandwidth, N amount of floats are transferred to the SMs but resulting in only one float output. Therefore, the bandwidth can be approximated as N * 4 [BYTE] / (TIME [s]).
 
