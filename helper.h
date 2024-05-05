@@ -52,9 +52,28 @@ void compareResultsMV(T *A, T *B, int M){
     }
 }
 
-int computeMV(float *hA, int N){
+__device__
+void printArrayDevice(float *A, int rows, int cols){
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < cols; j++){
+            printf("%1.0f ", A[i*cols + j]);
+        }
+        printf("\n");
+    }
+}
 
-return 0;
+// CPU parallel reduction
+float computeSum(float* hA, int N){
+
+    // parallel reduction
+    while(N > 1){
+        N /= 2;
+        for(int i = 0; i < N; i++){
+            hA[i] += hA[i + N];
+        }
+    }
+    float result = hA[0];
+    return result;
 }
 
 void cuBLASSUM(float *A, int N, float* result){
