@@ -14,7 +14,7 @@ $$ \text{AGAINSTROOF [PERCENT]} = \frac{N \text{[FLOP]} } {\text{TIME [s] *  GPU
 CUBLAS functions typically have various custom kernels that get called even depending on the GPU specifications. It has to be noted that the execution times of the final CUBLAS kernel is actually used rather than the time taken by the CUBLAS function itself. The CUBLAS functions take much longer time to call the specific kernel needed. This itself motivates users to write custom kernels.
 
 
-In a real world scenario, the GPU adaptively chooses varying frequency which is typically higher than the base frequency. Letting GPUs unpinned on the frequency might provide inconsistent results. Therefore for consistency, we pin the clock frequency to base frequency for all kernel measurements. The unpinned clock frequency can be achieved in `ncu` using `--clock-control none` option. By default, `ncu` pins the kernels to base frequncy whereas `nsys` seem to be working on unpinned frequencies.
+In a real world scenario, the GPU adaptively chooses varying frequency which is typically higher than the base frequency. We DO NOT pin the clock frequency to base frequency for all kernel measurements as it might measure close to real-time execution speeds. The unpinned clock frequency can be achieved in `ncu` using `--clock-control none` option. By default, `ncu` pins the kernels to base frequncy whereas `nsys` seems to be working on unpinned frequencies.
 
 PINNED CLOCK FREQUENCY : CUBLAS kernel time taken = 0.541 ms (uses `asum_kernel` twice as seen from `nsys` data.). In this case, CUBLAS uses about roughly 0.564 % of the roofline performance for this GPU.
 
@@ -29,7 +29,7 @@ Commands for building and profiling:
 
 `nsys profile -o nsys_par-sum --stats=true ./par-sum`
 
-`ncu -o ncu_par-sum  -f ./par-sum`
+`ncu -o ncu_par-sum -f --clock-control none  ./par-sum`
 
 `ncu-ui ncu_par-sum.ncu-rep`
 
