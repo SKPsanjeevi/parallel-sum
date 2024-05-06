@@ -42,4 +42,5 @@ Commands for building and profiling:
 |Halve the blocks (1/2)		|67.92			|0.988		|42.00
 |Even fewer blocks (1/8)	|170.33			|0.394		|105.3
 |Unroll the last warp   	|169.46			|0.396		|104.7
+|Use FLOAT4		   	|170.33			|0.394		|105.3
 
