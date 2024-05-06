@@ -35,12 +35,12 @@ Commands for building and profiling:
 
 
 
-|KERNEL    	  		|BANDWIDTH (GB/s)    	|TIME (ms) 	|AGAINST_CUBLAS (%)
-| ------------------------- 	| --------------------- | ------------- | ----------------
-|NAIVE (GPU serial)		|1.34			|49.78		|0.83
-|Shared memory			|35.13			|1.91		|21.72
-|Halve the blocks (1/2)		|67.92			|0.988		|42.00
-|Even fewer blocks (1/8)	|170.33			|0.394		|105.3
-|Unroll the last warp   	|169.46			|0.396		|104.7
-|Use FLOAT4		   	|170.33			|0.394		|105.3
+VERSION	|DESCRIPTION    	  	|BANDWIDTH (GB/s)    	|TIME (ms) 	|AGAINST_CUBLAS (%)
+-------	| ------------------------- 	| --------------------- | ------------- | ----------------
+1	|Naive (GPU serial)		|1.34			|49.78		|0.83
+2	|Shared memory			|35.13			|1.91		|21.72
+3	|Halve the blocks (1/2)		|67.92			|0.988		|42.00
+4	|Even fewer blocks (1/8)	|170.33			|0.394		|105.3
+5	|Unroll the last warp   	|169.46			|0.396		|104.7
+6	|Use FLOAT4		   	|170.33			|0.394		|105.3
 
