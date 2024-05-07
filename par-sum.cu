@@ -160,7 +160,7 @@ float4 float4Sum(float4& v0, float4& v1, float4& v2, float4& v3, float4& v4, flo
 
 // kernelV4 with FLOAT4
 __global__
-void kernelV6(float* A, float* result){
+void kernelV6(float* __restrict__ A, float* __restrict__ result){
     extern __shared__ float sA[];
     int tId = blockIdx.x * blockDim.x + threadIdx.x;
     int tx = threadIdx.x;
@@ -198,7 +198,7 @@ void kernelV6(float* A, float* result){
             sA[tx] += sA[tx + bx];
         }
         __syncthreads();
-    }    
+    }
 
     if(tx == 0){
         atomicAdd(result, sA[0]);

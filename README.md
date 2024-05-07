@@ -1,6 +1,6 @@
 *** PARALLEL SUM ***
 
-Performance data on RTX3050Mobile for a vector of size N. In our case, N = 16 million elements (4096^2).
+Performance data on RTX3050Mobile for a vector of size N. In our case, N = 16.78 million elements (4096^2).
 
 The max ceiling performance of a RTX3050 Mobile is 5.501 TFLOPS (for FP32) and global memory bandwidth of 192 GBytes/s.
 Source : https://www.techpowerup.com/gpu-specs/geforce-rtx-3050-mobile.c3788
