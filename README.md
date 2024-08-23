@@ -4,19 +4,20 @@ In this work, we write several CUDA kernels and evaluate their performance again
 In our case, **N = 16.78 million elements (4096^2)**. The hardware used is a RTX3050 Mobile. The max ceiling performance of a RTX3050 Mobile is **5.501 TFLOPS (for FP32)** and global memory bandwidth of **192 GB/s**. Source : https://www.techpowerup.com/gpu-specs/geforce-rtx-3050-mobile.c3788
 
 
-CUBLAS functions typically have several underlying kernels to do a specific operation. Depending on several parameters such as GPU specifications, problem size, etc, a specific kernel optimized for these parameters gets called on the fly. We have used execution times of the underlying CUBLAS kernel rather than the time taken by the CUBLAS function itself. The CUBLAS functions take much longer due to the overhead in calling the specific kernel needed. This itself motivates users to write custom kernels or atleast call the specific underlying kernel if the problem size/hardware, etc are fixed.
+CUBLAS functions typically have several underlying kernels to do a specific operation. Depending on several parameters such as GPU specifications, problem size, etc, a specific kernel optimized for these parameters gets called on the fly. We have used execution times of the underlying CUBLAS kernel rather than the time taken by the CUBLAS function itself for comparison. The CUBLAS functions take much longer due to the overhead in calling the specific kernel needed. This itself motivates users to write custom kernels or atleast call directly the specific underlying kernel if the problem size/hardware, etc are fixed.
 
-In a real world scenario, the GPU adaptively chooses varying frequency which is typically higher than the base frequency. We DO NOT pin the clock frequency to base frequency for all kernel measurements as it will measure the actual execution speeds. By default, Nsight Compute (`ncu`) pins the kernels to base frequncy whereas Nsight System `nsys` seems to be working on unpinned frequencies. The unpinned clock frequency can be achieved in `ncu` using `--clock-control none` option. 
+In a real world scenario, the GPU adaptively chooses varying frequency which is typically higher than the base frequency. By default, Nsight Compute (`ncu`) [pins the kernels to base frequncy](https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#clock-control) for consistency/reproducibility whereas Nsight System (`nsys`) works on unpinned frequencies. The unpinned clock frequency can be achieved in `ncu` using `--clock-control none` option. We **DO NOT PIN** the clock frequency to base frequency for all kernel measurements to measure the actual execution speeds.
 
-Given theoretical peak GPU performance (or the ROOF in roofline model), we can compute relative performance using time taken by the kernel using
+Given theoretical peak GPU performance, we can compute relative performance using the time taken by the kernel as
+
 $$ \text{AGAINSTROOF [PERCENT]} = \frac{N \text{[FLOP]} } {\text{TIME [s] *  GPUPEAKPERFORMANCE [FLOPS]}} * 100 [\text{PERCENT}] $$
 
-PINNED CLOCK FREQUENCY : CUBLAS kernel time taken = 0.541 ms (uses `asum_kernel` twice as seen from `nsys` data.). In this case, CUBLAS takes about **0.564 %** of the roofline performance for this GPU.
+PINNED CLOCK FREQUENCY : CUBLAS kernel time taken = 0.541 ms (uses `asum_kernel` twice as seen from `nsys` data.). In this case, CUBLAS takes about **0.564 %** of the peak compute available for this GPU.
 
-UNPINNED CLOCK FREQUENCY : CUBLAS kernel time taken = 0.415 ms (uses `asum_kernel` twice as seen from `nsys` data.). In this case, CUBLAS uses about **0.735 %** of the roofline performance for this GPU.
+UNPINNED CLOCK FREQUENCY : CUBLAS kernel time taken = 0.415 ms (uses `asum_kernel` twice as seen from `nsys` data.). In this case, CUBLAS uses about **0.735 %** of the peak compute available for this GPU.
 
 
-For computing the bandwidth, N amount of floats are transferred to the SMs but resulting in only one float output. Therefore, the bandwidth can be approximated as N * 4 [BYTE] / (TIME [s]).
+For computing the bandwidth, N amount of floats are transferred to the SMs but resulting in only one float output. Therefore, the bandwidth can be approximated as N * 4 [byte] / TIME [s].
 
 Commands for building and profiling:
 
@@ -45,9 +46,9 @@ VERSION	|DESCRIPTION    	  	|BANDWIDTH (GB/s)    	|TIME (ms) 	|AGAINST_CUBLAS* (
 
 [Roofline model analysis](https://en.wikipedia.org/wiki/Roofline_model)
 
-The parallel sum problem is heavily memory bound. The highest memory bandwidth achieved (170.33 GB/s) is already about 89% of the global memory bandwidth of 192 GB/s with a plenty of compute FLOPS left on the table (only 1% compute is used). This is expected as every data is 4 byte long for a single floating point operation and therefore, the [arithmetic intensity](https://en.wikipedia.org/wiki/Roofline_model#Arithmetic_intensity) is 0.25. The memory bandwidth of the GPU being an order of magnitude lower than the compute power combined with poor arithmetic intensity of the current problem is the reason for the poor GPU utilization.
+The parallel sum problem is heavily memory bound. The highest memory bandwidth achieved (170.33 GB/s) is already about 89% of the global memory bandwidth of 192 GB/s with a plenty of compute FLOPS left on the table (less than 1% compute is used). This is expected as every data is 4 byte long for a single floating point operation and therefore, the [arithmetic intensity](https://en.wikipedia.org/wiki/Roofline_model#Arithmetic_intensity) is 0.25. The memory bandwidth of the GPU being an order of magnitude lower than the compute power combined with poor arithmetic intensity of the current problem is the reason for the poor GPU utilization.
 
-`Compute work load [FLOPS] 	= Arithmetic Intensity [FLOPs/byte] * Bandwdith [byte/s]`
+`Compute work load [FLOPS] = Arithmetic Intensity [FLOPs/byte] * Bandwdith [byte/s]`
 			  	`= 0.25 * 170.33e9 = 42.58e9 FLOPs`
 
 `Against GPUPEAKPERFORMANCE [%] = Compute work load [FLOPS] / GPUPEAKPERFORMANCE [FLOPS] * 100 [%]`
